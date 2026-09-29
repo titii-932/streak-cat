@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:">
+<title>Streak</title>
+<style>@font-face{font-family:"Fredoka";font-weight:400;src:url("fonts/fredoka-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"Fredoka";font-weight:500;src:url("fonts/fredoka-latin-500-normal.woff2") format("woff2")}
+@font-face{font-family:"Fredoka";font-weight:600;src:url("fonts/fredoka-latin-600-normal.woff2") format("woff2")}
+@font-face{font-family:"Fredoka";font-weight:700;src:url("fonts/fredoka-latin-700-normal.woff2") format("woff2")}
+
+:root{
+  --wall1:#ffe3ef; --wall2:#e9dcff; --card:#fffafc; --line:#7a4a63; --text:#7a4a63; --soft:#c39ab0;
+  --main:#ff8fb8; --main2:#ff6fa3; --sun:#ffe28a; --ring:#ffe6f0; --cheek:#ff8fb1;
+  --o1:#f6a24f; --o2:#dd7a2a; --ol:#9a5220; --cream:#fff4e3; --pk:#ffb0bd; --dark:#4a2a1a;
+}
+*{box-sizing:border-box;margin:0}
+body{
+  font-family:"Fredoka",ui-rounded,"Segoe UI",system-ui,sans-serif;color:var(--text);background:transparent;
+  padding:14px 16px 26px;overflow:hidden;user-select:none;-webkit-user-select:none;
+}
+@keyframes tw{50%{transform:scale(.6) rotate(20deg);opacity:.3}}
+
+/* ---------- WIDGET ---------- */
+.widget{width:330px;background:var(--card);border-radius:36px;padding:0 20px 20px;text-align:center;position:relative;z-index:1;
+  border:4px solid var(--line);box-shadow:0 8px 0 var(--line),0 24px 40px -10px #0003;overflow:hidden}
+.head-bar{margin:0 -20px 4px;padding:10px 20px 9px;display:flex;justify-content:space-between;align-items:center;
+  font-weight:600;font-size:13px;color:#fff;border-bottom:4px solid var(--line);
+  background:linear-gradient(90deg,#ffffff55 50%,transparent 50%) 0 0/16px 16px,linear-gradient(0deg,#ffffff55 50%,transparent 50%) 0 0/16px 16px,var(--main);
+  transition:background-color .5s}
+.head-bar b{font-size:15px;text-shadow:0 2px 0 var(--line)}
+.head-bar .date{background:#fff;color:var(--text);border-radius:99px;padding:2px 10px;font-size:12px;border:2px solid var(--line)}
+
+.stage{position:relative;height:172px;margin-top:6px}
+.stage .sp{position:absolute;color:var(--main);animation:tw 2.8s ease-in-out infinite;transition:opacity .4s}
+.cat-wrap{width:190px;height:172px;margin:0 auto}
+.cat-wrap svg{width:100%;height:100%;overflow:visible}
+
+/* --- humeurs : on n'affiche que le visage/éléments de l'humeur courante --- */
+.m{display:none}
+.widget[data-mood="sleep"] .m-sleep,.widget[data-mood="happy"] .m-happy,
+.widget[data-mood="sad"] .m-sad,.widget[data-mood="dead"] .m-dead{display:inline}
+.widget[data-mood="sleep"] .sp,.widget[data-mood="dead"] .sp{opacity:0}
+.widget[data-mood="sad"] .sp{opacity:.35}
+
+.cat,.head,.earL,.earR,.tail,.glasses,.body{transition:transform .7s cubic-bezier(.3,1.3,.5,1),filter .7s}
+.head{transform-origin:100px 130px}
+.earL{transform-origin:62px 72px}.earR{transform-origin:138px 72px}
+.tail{transform-origin:140px 158px}
+.glasses{transform-origin:100px 92px}
+.body{transform-origin:100px 176px}
+.cat{transform-origin:100px 176px}
+
+/* dort */
+.widget[data-mood="sleep"] .cat{animation:breathe 3.6s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.02,1.035)}}
+.widget[data-mood="sleep"] .head{transform:rotate(-6deg) translateY(6px)}
+.widget[data-mood="sleep"] .glasses{transform:rotate(6deg) translateY(1px)}
+.widget[data-mood="sleep"] .tail{transform:rotate(10deg)}
+/* content */
+.widget[data-mood="happy"] .cat{animation:hop 1.3s ease-in-out infinite}
+@keyframes hop{0%,100%{transform:translateY(0) scale(1.02,.98)}45%{transform:translateY(-10px) scale(.98,1.03)}}
+.widget[data-mood="happy"] .tail{animation:wag .5s ease-in-out infinite}
+@keyframes wag{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(14deg)}}
+.widget[data-mood="happy"] .earL{animation:earL 1.3s ease-in-out infinite}
+.widget[data-mood="happy"] .earR{animation:earR 1.3s ease-in-out infinite}
+@keyframes earL{50%{transform:rotate(-8deg)}}@keyframes earR{50%{transform:rotate(8deg)}}
+/* triste */
+.widget[data-mood="sad"] .cat{animation:sob 2.6s ease-in-out infinite}
+@keyframes sob{0%,100%{transform:translateY(0)}50%{transform:translateY(2px) scale(1,.985)}}
+.widget[data-mood="sad"] .head{transform:rotate(4deg) translateY(5px)}
+.widget[data-mood="sad"] .earL{transform:rotate(-16deg)}
+.widget[data-mood="sad"] .earR{transform:rotate(16deg)}
+.widget[data-mood="sad"] .tail{transform:rotate(24deg)}
+.tear{animation:tear 2.2s ease-in infinite}
+@keyframes tear{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(34px);opacity:0}}
+/* au bout du rouleau */
+.widget[data-mood="dead"] .cat{filter:grayscale(.55) brightness(.96);animation:limp 4s ease-in-out infinite}
+@keyframes limp{50%{transform:translateY(3px) scale(1.01,.98)}}
+.widget[data-mood="dead"] .head{transform:rotate(-10deg) translate(-4px,14px)}
+.widget[data-mood="dead"] .body{transform:scaleY(.9)}
+.widget[data-mood="dead"] .glasses{transform:rotate(-12deg) translateY(4px)}
+.widget[data-mood="dead"] .earL{transform:rotate(-24deg)}
+.widget[data-mood="dead"] .earR{transform:rotate(22deg)}
+.widget[data-mood="dead"] .tail{transform:rotate(38deg)}
+.spin{animation:spin 2.4s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ghost{animation:ghost 3s ease-in-out infinite}
+@keyframes ghost{0%{transform:translate(0,8px);opacity:0}30%{opacity:.9}100%{transform:translate(8px,-22px);opacity:0}}
+.sweat{animation:sweat 2.4s ease-in infinite}
+@keyframes sweat{0%{transform:translateY(-4px);opacity:0}20%{opacity:1}100%{transform:translateY(16px);opacity:0}}
+.zzz{font-weight:700;fill:var(--main2);font-size:20px;animation:zz 2.4s ease-in-out infinite}
+@keyframes zz{0%{opacity:0;transform:translate(0,6px)}50%{opacity:1}100%{opacity:0;transform:translate(8px,-12px)}}
+.bubble{animation:bub 3.6s ease-in-out infinite;transform-box:fill-box;transform-origin:left center}
+@keyframes bub{0%,100%{transform:scale(.4)}50%{transform:scale(1.25)}}
+.twinkle{animation:tw 1.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+
+.count{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:2px}
+.num{font-size:70px;font-weight:700;line-height:1;color:#fff;
+  text-shadow:-3px -3px 0 var(--line),3px -3px 0 var(--line),-3px 3px 0 var(--line),3px 3px 0 var(--line),0 5px 0 var(--line),0 -3px 0 var(--line),3px 0 0 var(--line),-3px 0 0 var(--line),0 8px 0 var(--main);padding:0 4px}
+.num.bump{animation:bump .6s cubic-bezier(.3,1.7,.5,1)}
+@keyframes bump{0%{transform:scale(.5) rotate(-8deg)}100%{transform:scale(1) rotate(0)}}
+.unit{font-size:18px;font-weight:600;background:var(--sun);border:3px solid var(--line);border-radius:99px;padding:1px 12px;transform:rotate(-4deg);margin-top:18px}
+.msg{min-height:40px;font-size:14px;font-weight:500;margin:10px 6px 10px;line-height:1.25;display:flex;align-items:center;justify-content:center}
+
+.week{display:flex;justify-content:center;gap:5px;margin-bottom:14px}
+.dot{width:32px;height:30px;transition:.3s}
+.dot svg{width:100%;height:100%;overflow:visible}
+.dot .h{fill:var(--ring);stroke:var(--soft);stroke-width:2;transition:.3s}
+.dot.on .h{fill:var(--main);stroke:var(--line);stroke-width:2.5}
+.dot.on{transform:scale(1.08)}
+.dot.gift .h{stroke-dasharray:3 2.5;stroke:var(--main2)}
+.dot.gift.on .h{fill:var(--sun);stroke-dasharray:0;stroke:var(--line)}
+
+.btn{width:100%;border:4px solid var(--line);border-radius:26px;padding:15px 8px;font:inherit;font-size:19px;font-weight:700;color:#fff;cursor:pointer;
+  background:linear-gradient(180deg,var(--main),var(--main2));text-shadow:0 2px 0 var(--line);box-shadow:0 7px 0 var(--line);position:relative;
+  transition:transform .1s,box-shadow .1s,filter .3s}
+.btn::before{content:"";position:absolute;left:14px;right:14px;top:6px;height:9px;border-radius:99px;background:#fff6}
+.btn:hover{transform:translateY(-2px);box-shadow:0 9px 0 var(--line)}
+.btn:active{transform:translateY(6px);box-shadow:0 1px 0 var(--line)}
+.btn.done{filter:grayscale(.7) brightness(1.1);cursor:default;transform:translateY(6px);box-shadow:0 1px 0 var(--line)}
+.btn.done:hover{transform:translateY(6px);box-shadow:0 1px 0 var(--line)}
+
+.pass{margin-top:22px;padding:9px 12px;border-radius:18px;background:#fff6c9;border:3px dashed var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px;position:relative}
+.pass::before,.pass::after{content:"";position:absolute;top:50%;width:16px;height:16px;border-radius:50%;background:var(--card);border:3px solid var(--line);transform:translateY(-50%)}
+.pass::before{left:-11px;clip-path:inset(0 0 0 55%)}.pass::after{right:-11px;clip-path:inset(0 55% 0 0)}
+.pass .label{font-size:14px;font-weight:700;text-align:left;line-height:1.1;display:flex;flex-direction:column}
+.pass .label small{font-weight:500;color:var(--soft);font-size:11px;margin-top:2px}
+.tickets{display:flex;gap:4px}
+.tk{width:22px;height:22px;transition:.3s}
+.tk svg{width:100%;height:100%;overflow:visible}
+.tk .s{fill:#fff;stroke:var(--soft);stroke-width:2;stroke-linejoin:round}
+.tk.on .s{fill:var(--sun);stroke:var(--line);stroke-width:2.5}
+.tk.on{transform:rotate(-8deg) scale(1.1)}
+.pass.pop{animation:wob .7s}
+@keyframes wob{25%{transform:rotate(-3deg) scale(1.05)}60%{transform:rotate(3deg) scale(1.05)}}
+.confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.confetti i{position:absolute;left:50%;top:40%;font-style:normal;animation:fly 1.2s ease-out forwards}
+@keyframes fly{to{transform:translate(var(--x),var(--y)) rotate(var(--r));opacity:0}}
+
+
+.head-bar{-webkit-app-region:drag;cursor:grab}
+.btn,.menu-btn{-webkit-app-region:no-drag}
+.head-right{display:flex;align-items:center;gap:6px}
+.menu-btn{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);background:#fff;color:var(--text);font:inherit;font-size:14px;line-height:1;cursor:pointer;padding:0;display:grid;place-items:center}
+.menu-btn:hover{background:var(--sun)}
+</style>
+</head>
+<body>
+<div class="widget" id="w" data-mood="sleep">
+  <div class="head-bar"><b>♡ Ma streak ♡</b><span class="head-right"><span class="date" id="date"></span><button class="menu-btn" id="menu" title="Options">⋯</button></span></div>
+  <div class="stage">
+    <span class="sp" style="left:20px;top:16px;font-size:18px">✦</span>
+    <span class="sp" style="right:24px;top:34px;animation-delay:.9s;font-size:14px">♡</span>
+    <span class="sp" style="left:30px;top:100px;animation-delay:1.6s;font-size:13px">♡</span>
+    <span class="sp" style="right:18px;top:110px;animation-delay:.4s;font-size:18px">✦</span>
+    <div class="cat-wrap"><svg viewBox="0 0 200 190">
+        <ellipse cx="100" cy="181" rx="58" ry="7" fill="#7a4a63" opacity=".14"/>
+        <g class="cat">
+          <!-- queue -->
+          <g class="tail">
+            <path d="M140 160 C182 162 190 122 166 110" fill="none" stroke="#9a5220" stroke-width="18" stroke-linecap="round"/>
+            <path d="M140 160 C182 162 190 122 166 110" fill="none" stroke="#f6a24f" stroke-width="10.500" stroke-linecap="round"/>
+            <path d="M172 114 C165 108 164 108 164 108" fill="none" stroke="#dd7a2a" stroke-width="10.500" stroke-linecap="round"/>
+          </g>
+          <!-- corps -->
+          <g class="body">
+            <ellipse cx="100" cy="148" rx="42" ry="34" fill="#f6a24f" stroke="#9a5220" stroke-width="4"/>
+            <ellipse cx="100" cy="156" rx="22" ry="21" fill="#fff4e3"/>
+            <path d="M62 140h10M60 152h9M138 140h-10M140 152h-9" stroke="#dd7a2a" stroke-width="4" stroke-linecap="round"/>
+            <ellipse cx="82" cy="177" rx="13" ry="8" fill="#fff4e3" stroke="#9a5220" stroke-width="3.5"/>
+            <ellipse cx="118" cy="177" rx="13" ry="8" fill="#fff4e3" stroke="#9a5220" stroke-width="3.5"/>
+          </g>
+          <!-- tête -->
+          <g class="head">
+            <g class="earL">
+              <path d="M44 78Q34 32 52 26Q62 25 90 46Z" fill="#f6a24f" stroke="#9a5220" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M51 62Q47 42 56 38Q63 39 77 49Z" fill="#ffb0bd" opacity=".85"/>
+            </g>
+            <g class="earR">
+              <path d="M156 78Q166 32 148 26Q138 25 110 46Z" fill="#f6a24f" stroke="#9a5220" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M149 62Q153 42 144 38Q137 39 123 49Z" fill="#ffb0bd" opacity=".85"/>
+            </g>
+            <ellipse cx="100" cy="94" rx="60" ry="50" fill="#f6a24f" stroke="#9a5220" stroke-width="4"/>
+            <path d="M100 46v12M88 48l3 10M112 48l-3 10M42 96h10M43 107h9M158 96h-10M157 107h-9" stroke="#dd7a2a" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <ellipse cx="100" cy="111" rx="25" ry="16" fill="#fff4e3"/>
+            <ellipse cx="55" cy="109" rx="9" ry="6" fill="#ffb0bd" opacity=".65"/>
+            <ellipse cx="145" cy="109" rx="9" ry="6" fill="#ffb0bd" opacity=".65"/>
+            <path d="M44 114l-14-3M44 120l-14 3M156 114l14-3M156 120l14 3" stroke="#9a5220" stroke-width="2" opacity=".4" stroke-linecap="round"/>
+            <path d="M95 103Q100 99 105 103Q100 110 95 103Z" fill="#ff8ea0" stroke="#9a5220" stroke-width="1.5" stroke-linejoin="round"/>
+
+            <!-- ===== DORT ===== -->
+            <g class="m m-sleep">
+              <path d="M62 97q10 9 20 0M118 97q10 9 20 0" stroke="#4a2a1a" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M94 116q6 5 12 0" stroke="#4a2a1a" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+              <circle class="bubble" cx="107" cy="104" r="6" fill="#e6f6ff" stroke="#8fc6e8" stroke-width="2"/>
+            </g>
+            <!-- ===== CONTENT ===== -->
+            <g class="m m-happy">
+              <path d="M61 99q11-15 22 0M117 99q11-15 22 0" stroke="#4a2a1a" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+              <path d="M90 112q10 17 20 0Z" fill="#d9536b" stroke="#4a2a1a" stroke-width="3" stroke-linejoin="round"/>
+              <ellipse cx="100" cy="121" rx="5" ry="3.500" fill="#ff9aaa"/>
+              <ellipse cx="55" cy="109" rx="10" ry="7" fill="#ff8fb1" opacity=".5"/>
+              <ellipse cx="145" cy="109" rx="10" ry="7" fill="#ff8fb1" opacity=".5"/>
+            </g>
+            <!-- ===== TRISTE ===== -->
+            <g class="m m-sad">
+              <path d="M58 78L84 68M142 78L116 68" stroke="#9a5220" stroke-width="3.500" stroke-linecap="round"/>
+              <ellipse cx="72" cy="94" rx="9" ry="11" fill="#4a2a1a"/><circle cx="75" cy="88.500" r="4" fill="#fff"/><circle cx="68" cy="99" r="2" fill="#fff"/>
+              <ellipse cx="128" cy="94" rx="9" ry="11" fill="#4a2a1a"/><circle cx="131" cy="88.500" r="4" fill="#fff"/><circle cx="124" cy="99" r="2" fill="#fff"/>
+              <path d="M92 121q8-8 16 0" stroke="#4a2a1a" stroke-width="3.500" stroke-linecap="round" fill="none"/>
+              <path class="tear" d="M60 104q-5 7 0 11q5-4 0-11Z" fill="#8fd3ff" stroke="#5fb4e8" stroke-width="1.500"/>
+            </g>
+            <!-- ===== AU BOUT DU ROULEAU ===== -->
+            <g class="m m-dead">
+              <path d="M58 78L84 74M142 78L116 74" stroke="#9a5220" stroke-width="3.500" stroke-linecap="round"/>
+              <path d="M60 108q12 6 24 0M116 108q12 6 24 0" stroke="#6b4b7a" stroke-width="3" opacity=".35" stroke-linecap="round" fill="none"/>
+              <path id="spL" class="spin" fill="none" stroke="#4a2a1a" stroke-width="2.800" stroke-linecap="round"/>
+              <path id="spR" class="spin" fill="none" stroke="#4a2a1a" stroke-width="2.800" stroke-linecap="round"/>
+              <path d="M88 122q4-6 8 0t8 0t8 0" stroke="#4a2a1a" stroke-width="3.500" stroke-linecap="round" fill="none"/>
+              <path class="sweat" d="M146 62q-5 8 0 12q5-4 0-12Z" fill="#a8dcff" stroke="#6bb6e8" stroke-width="1.500"/>
+              <path class="ghost" d="M118 116q14-4 10-20q10 8 4 22Z" fill="#fff" stroke="#cfd6e6" stroke-width="2" stroke-linejoin="round" opacity=".9"/>
+            </g>
+
+            <!-- lunettes -->
+            <g class="glasses">
+              <circle cx="72" cy="94" r="19" fill="#fff" fill-opacity=".3" stroke="#7a4a24" stroke-width="4"/>
+              <circle cx="128" cy="94" r="19" fill="#fff" fill-opacity=".3" stroke="#7a4a24" stroke-width="4"/>
+              <path d="M91 92Q100 86 109 92" fill="none" stroke="#7a4a24" stroke-width="4" stroke-linecap="round"/>
+              <path d="M58 84q4-7 12-8M114 84q4-7 12-8" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".9"/>
+              <path class="m m-dead" d="M62 84l8 8l-4 6l8 9" stroke="#fff" stroke-width="2.500" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </g>
+            <g class="m m-sleep"><text class="zzz" x="150" y="52">z</text><text class="zzz" x="162" y="34" style="animation-delay:.8s;font-size:14px">z</text></g>
+          </g>
+        </g>
+      </svg></div>
+  </div>
+  <div class="count"><span class="num" id="num">0</span><span class="unit" id="unit">jour</span></div>
+  <div class="msg" id="msg"></div>
+  <div class="week" id="week"></div>
+  <button class="btn" id="btn">Je m'y mets ! ♡</button>
+  <div class="pass" id="pass"><div class="label">Work Pass<small id="passtxt">0 / 5</small></div><div class="tickets" id="tickets"></div></div>
+  <div class="confetti" id="confetti"></div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
