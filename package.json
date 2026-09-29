@@ -1,0 +1,59 @@
+{
+  "name": "streak-chat",
+  "version": "1.0.0",
+  "description": "Widget de streak quotidienne avec un chat à lunettes",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "package": "electron-packager . StreakChat --platform=win32 --arch=x64 --out=dist --overwrite --ignore=\"^/dist\"",
+    "dist": "electron-builder --win"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@electron/packager": "^20.3.0",
+    "@fontsource/fredoka": "^5.3.0",
+    "electron": "^44.4.3",
+    "electron-builder": "^26.15.3"
+  },
+  "dependencies": {
+    "koffi": "^2.16.3"
+  },
+  "productName": "Streak Chat",
+  "build": {
+    "appId": "com.websis.streakchat",
+    "productName": "Streak Chat",
+    "publish": null,
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!dist/**/*",
+      "!screenshots/**/*",
+      "!*.zip",
+      "!node_modules/koffi/build/koffi/{darwin_arm64,darwin_x64,freebsd_arm64,freebsd_ia32,freebsd_x64,linux_arm64,linux_armhf,linux_ia32,linux_loong64,linux_riscv64d,linux_x64,musl_arm64,musl_x64,openbsd_ia32,openbsd_x64,win32_ia32}/**/*"
+    ],
+    "asarUnpack": [
+      "node_modules/koffi/**/*"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Streak Chat"
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-portable.exe"
+    }
+  }
+}
